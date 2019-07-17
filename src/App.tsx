@@ -119,8 +119,9 @@ const App: React.FC = () => {
         <ThemeProvider theme={theme}>
             <div className="App" style={{padding: 50}}>
                 <AppBar>
+                    <!--suppress RequiredAttributes -->
                     <Tabs value={tab}
-                          onChange={(event: React.ChangeEvent<{}>, value: TabKey) => setTab(value)} component={'div'}>
+                          onChange={(event: React.ChangeEvent<{}>, value: TabKey) => setTab(value)} >
                         <Tab value={"tr"} label="Table" href='table'/>
                         <Tab value={"div"} label="Div" href='div'/>
 

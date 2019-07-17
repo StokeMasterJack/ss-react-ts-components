@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => {
 
     return {
         rowDiv: {
-            display: "flex",
+            display: "flex"
         },
         rowTr: {},
         id: {
@@ -115,11 +115,11 @@ const App: React.FC = () => {
     const theme: Theme = createMuiTheme();
     const [tab, setTab] = useState<TabKey>("tr");
 
+    // noinspection RequiredAttributes
     return (
         <ThemeProvider theme={theme}>
             <div className="App" style={{padding: 50}}>
                 <AppBar>
-                    <!--suppress RequiredAttributes -->
                     <Tabs value={tab}
                           onChange={(event: React.ChangeEvent<{}>, value: TabKey) => setTab(value)} >
                         <Tab value={"tr"} label="Table" href='table'/>

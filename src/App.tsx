@@ -1,5 +1,10 @@
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import axios, {AxiosResponse} from "axios";
+import createMuiTheme, {Theme} from "@material-ui/core/styles/createMuiTheme";
+import makeStyles from "@material-ui/styles/makeStyles";
+import ThemeProvider from "@material-ui/styles/ThemeProvider";
+
 import {
     CLazyRow,
     CLazyScroll,
@@ -11,12 +16,8 @@ import {
     RowSpecBody,
     RowSpecHead
 } from "./components/lazy-scroll";
-import createMuiTheme, {Theme} from "@material-ui/core/styles/createMuiTheme";
-
-import empSampleData from "./emp-sample-data";
 import {EmpFull} from "./emp-types";
-import makeStyles from "@material-ui/styles/makeStyles";
-import ThemeProvider from "@material-ui/styles/ThemeProvider";
+
 import {LazyScrollSettings, LazyScrollSettingsDialog} from "./components/lazy-scroll-settings";
 
 export type ClassKey =
@@ -131,7 +132,18 @@ const RowContentHead = (p: LazyScrollProps & { head: boolean }) => {  // eslint-
 };
 
 
+const fetchEmps = async (): Promise<readonly  EmpFull[]> => {
+    const r: AxiosResponse<readonly EmpFull[]> = await axios.request<readonly EmpFull[]>({
+        method: "get",
+        url: "/emps.json"
+    });
+    return r.data;
+};
+
 const LazyScrollDemo = (s: LazyScrollSettings) => {
+
+    const [rows, setRows] = useState<readonly EmpFull[]>([]);
+
     const classes = useStyles1();
     const rowSpecHead: RowSpecHead = {
         rowContent: RowContentHead,
@@ -149,7 +161,6 @@ const LazyScrollDemo = (s: LazyScrollSettings) => {
     };
 
     const colCount = 4;
-    const rows = empSampleData;
     const ppp: LazyScrollProps = {
         classes,
         rowSpecHead,
@@ -160,6 +171,26 @@ const LazyScrollDemo = (s: LazyScrollSettings) => {
         rowCountVisible: s.visRows_[0],
         onShowSettings: () => s.openDialog_[1](true)
     };
+
+
+    useEffect(() => {
+        let ignore = false;
+
+        const _fetch = async (): Promise<void> => {
+            const a = await fetchEmps();
+            if (!ignore) {
+                setRows(a);
+            }
+
+        };
+
+        // noinspection JSIgnoredPromiseFromCall
+        _fetch();
+
+        return () => {
+            ignore = true;
+        };
+    }, [1]);
 
     return <LazyScroll {...ppp} />;
 

@@ -35,23 +35,5 @@ body {
 }
 
 
-:global .dave input {
-    padding: .2rem .2rem .2rem .2rem;
-    border-color: rgba(0, 0, 0, 0.12);
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 4px;
-}
-
-:global .dave textarea {
-    padding: .2rem .2rem .2rem .2rem;
-    border-color: rgba(0, 0, 0, 0.12);
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 4px;
-    font-size: 0.875rem;
-}
-
-
 
 

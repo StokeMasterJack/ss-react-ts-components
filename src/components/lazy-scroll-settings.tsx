@@ -1,7 +1,7 @@
 import *  as React from "react";
 import {Dispatch, SetStateAction, SyntheticEvent} from "react";
 
-import {InputProps} from "@material-ui/core/Input";
+import {InputProps as StandardInputProps, InputProps} from "@material-ui/core/Input";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -68,18 +68,31 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
         };
     }
 
-    const inputStyle: React.CSSProperties = {
-        fontSize: 14,
+    const _InputStyle: React.CSSProperties = {
+        fontSize: 12
     };
+
+    const _inputStyle: React.CSSProperties = {
+        // paddingLeft: '.2rem',
+        paddingTop:'.6rem',
+        paddingBottom:'.4rem',
+        paddingLeft:'.4rem',
+        paddingRight:'.2rem',
+    };
+
 
     const tfStyle: React.CSSProperties = {
         margin: 10,
     };
 
 
-    const inputProps: Partial<InputProps> = {
+    const _InputProps: Partial<InputProps> = {
         type: "number",
-        style: inputStyle
+        style: _InputStyle
+    };
+
+    const _inputProps: Partial<StandardInputProps["inputProps"]> = {
+        style: _inputStyle
     };
 
     return <Dialog open={open} onClose={onClose}>
@@ -92,7 +105,8 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
                                variant={"outlined"}
                                label="Row height head"
                                onChange={mkOnChange(setRowHeightHead, CLazyScroll.DEFAULT_ROW_HEIGHT_HEAD)}
-                               InputProps={inputProps}
+                               InputProps={_InputProps}
+                               inputProps={_inputProps}
 
                     />
                     <TextField value={rowHeightBody}
@@ -100,13 +114,17 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
                                variant={"outlined"}
                                label="Row height body"
                                onChange={mkOnChange(setRowHeightBody, CLazyScroll.DEFAULT_ROW_HEIGHT_BODY)}
-                               InputProps={inputProps}/>
+                               InputProps={_InputProps}
+                               inputProps={_inputProps}
+                    />
                     <TextField value={visRows}
                                style={tfStyle}
                                variant={"outlined"}
-                               label="# vis rows"
+                               label="# Visible rows"
                                onChange={mkOnChange(setVisRows, CLazyScroll.DEFAULT_ROW_COUNT_VISIBLE)}
-                               InputProps={inputProps}/>
+                               InputProps={_InputProps}
+                               inputProps={_inputProps}
+                    />
                 </div>
                 <div style={{display: "flex", flexDirection: "row"}}>
                     <div style={{display: "flex", flexDirection: "row", alignItems: "center", marginRight: "1rem"}}>

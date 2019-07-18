@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {CSSProperties, useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
 import createMuiTheme, {Theme} from "@material-ui/core/styles/createMuiTheme";
 import makeStyles from "@material-ui/styles/makeStyles";
@@ -64,6 +64,8 @@ export type AppClasses = {
 
 const theme: LazyScrollTheme = CLazyScroll.mkDefaultLazyScrollTheme();
 const styles1: LazyScrollStyles = CLazyScroll.mkCoreStyles(theme);
+
+type P = CSSProperties;
 const mkAppStyles = (t: LazyScrollTheme): AppStyles => {
 
     const td = styles1.td;
@@ -75,15 +77,15 @@ const mkAppStyles = (t: LazyScrollTheme): AppStyles => {
     };
 
 
-    const idTd = {...td, width: 60};
-    const firstNameTd = {...td, width: 200};
-    const lastNameTd = {...td, width: 200};
-    const stateTd = {...td, width: 40};
+    const idTd: P = {...td, width: 60};
+    const firstNameTd: P = {...td, width: 200};
+    const lastNameTd: P = {...td, width: 200};
+    const stateTd: P = {...td, width: 40};
 
-    const idTh = {...idTd, ...th};
-    const firstNameTh = {...firstNameTd, ...th};
-    const lastNameTh = {...lastNameTd, ...th};
-    const stateTh = {...stateTd, ...th};
+    const idTh: P = {...idTd, ...th};
+    const firstNameTh: P = {...firstNameTd, ...th};
+    const lastNameTh: P = {...lastNameTd, ...th};
+    const stateTh: P = {...stateTd, ...th};
 
     return {
 
@@ -102,7 +104,6 @@ const mkAppStyles = (t: LazyScrollTheme): AppStyles => {
 
 };
 const styles2: AppStyles = mkAppStyles(theme);
-
 
 const useStyles1 = makeStyles((): LazyScrollStyles => styles1);
 const useStyles2 = makeStyles((): AppStyles => styles2);
@@ -190,7 +191,7 @@ const LazyScrollDemo = (s: LazyScrollSettings) => {
         return () => {
             ignore = true;
         };
-    }, [1]);
+    }, []);
 
     return <LazyScroll {...ppp} />;
 

@@ -1,7 +1,7 @@
 import *  as React from "react";
 import {Dispatch, SetStateAction, SyntheticEvent} from "react";
 
-import {InputProps as StandardInputProps, InputProps} from "@material-ui/core/Input";
+import {InputProps as StandardInputProps} from "@material-ui/core/Input";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -74,10 +74,10 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
 
     const _inputStyle: React.CSSProperties = {
         // paddingLeft: '.2rem',
-        paddingTop:'.6rem',
-        paddingBottom:'.4rem',
-        paddingLeft:'.4rem',
-        paddingRight:'.2rem',
+        paddingTop: ".6rem",
+        paddingBottom: ".4rem",
+        paddingLeft: ".4rem",
+        paddingRight: ".2rem",
     };
 
 
@@ -86,14 +86,17 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
     };
 
 
-    const _InputProps: Partial<InputProps> = {
+    const _InputProps: Partial<StandardInputProps> = {
         type: "number",
-        style: _InputStyle
+        style: _InputStyle,
+        inputProps: {
+            style: _inputStyle
+        }
     };
 
-    const _inputProps: Partial<StandardInputProps["inputProps"]> = {
-        style: _inputStyle
-    };
+    // const _inputProps: StandardInputProps["inputProps"] = {
+    //     style: _inputStyle
+    // };
 
     return <Dialog open={open} onClose={onClose}>
         <DialogTitle>RTable Settings</DialogTitle>
@@ -106,7 +109,6 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
                                label="Row height head"
                                onChange={mkOnChange(setRowHeightHead, CLazyScroll.DEFAULT_ROW_HEIGHT_HEAD)}
                                InputProps={_InputProps}
-                               inputProps={_inputProps}
 
                     />
                     <TextField value={rowHeightBody}
@@ -115,7 +117,6 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
                                label="Row height body"
                                onChange={mkOnChange(setRowHeightBody, CLazyScroll.DEFAULT_ROW_HEIGHT_BODY)}
                                InputProps={_InputProps}
-                               inputProps={_inputProps}
                     />
                     <TextField value={visRows}
                                style={tfStyle}
@@ -123,7 +124,6 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
                                label="# Visible rows"
                                onChange={mkOnChange(setVisRows, CLazyScroll.DEFAULT_ROW_COUNT_VISIBLE)}
                                InputProps={_InputProps}
-                               inputProps={_inputProps}
                     />
                 </div>
                 <div style={{display: "flex", flexDirection: "row"}}>

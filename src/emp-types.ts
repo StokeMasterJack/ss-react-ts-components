@@ -1,4 +1,8 @@
-export interface EmpFull {
+import {Row} from "./components/intersection";
+import axios, {AxiosResponse} from "axios";
+import {UseState} from "./components/util";
+
+export interface Emp extends Row {
     id: number;
     firstName: string | null;
     lastName: string | null;
@@ -22,3 +26,13 @@ export interface EmpFull {
     wage: number | null;  //floats are represented as strings in view-model's
 
 }
+
+export type UseEmp = UseState<readonly Emp[]>;
+
+export const fetchEmps = async (): Promise<readonly  Emp[]> => {
+    const r: AxiosResponse<readonly Emp[]> = await axios.request<readonly Emp[]>({
+        method: "get",
+        url: "/emps.json"
+    });
+    return r.data;
+};

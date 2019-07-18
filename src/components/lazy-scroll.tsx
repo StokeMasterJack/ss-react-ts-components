@@ -1,5 +1,5 @@
 import * as React from "react";
-import {CSSProperties, Dispatch, FC, MutableRefObject, ReactChild, SetStateAction, useRef} from "react";
+import {CSSProperties, FC, MutableRefObject, ReactChild, useRef} from "react";
 import {InView, RootEl, Row, SetChildRef, useIntersection} from "./intersection";
 import {Int} from "./util";
 
@@ -233,9 +233,6 @@ export class CLazyRow {
 
 }
 
-export type UseState<T> = [T, Dispatch<SetStateAction<T>>];
-export type NN = UseState<number>;
-export type BB = UseState<boolean>;
 
 export class CLazyScroll {
 

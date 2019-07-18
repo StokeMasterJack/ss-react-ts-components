@@ -10,18 +10,17 @@ import Checkbox from "@material-ui/core/Checkbox";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 
-import {CLazyScroll, UseState} from "./lazy-scroll";
+import {CLazyScroll} from "./lazy-scroll";
+import {UseBool, UseNum} from "./util";
 
-export type N = UseState<number>;
-export type B = UseState<boolean>;
 
 export interface LazyScrollSettings {
-    rowHeightHead_: N,
-    rowHeightBody_: N,
-    visRows_: N,
-    showHeader_: B,
-    showFooter_: B,
-    openDialog_: B
+    rowHeightHead_: UseNum,
+    rowHeightBody_: UseNum,
+    visRows_: UseNum,
+    showHeader_: UseBool,
+    showFooter_: UseBool,
+    openDialog_: UseBool
 }
 
 export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRows_, showHeader_, showFooter_, openDialog_}: LazyScrollSettings) => {
@@ -93,10 +92,6 @@ export const LazyScrollSettingsDialog = ({rowHeightHead_, rowHeightBody_, visRow
             style: _inputStyle
         }
     };
-
-    // const _inputProps: StandardInputProps["inputProps"] = {
-    //     style: _inputStyle
-    // };
 
     return <Dialog open={open} onClose={onClose}>
         <DialogTitle>RTable Settings</DialogTitle>

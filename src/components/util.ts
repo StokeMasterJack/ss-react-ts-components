@@ -1,3 +1,5 @@
+import {Dispatch, SetStateAction} from "react";
+
 export type Int = number;
 
 export const ensure = <T extends {}>(value?: T | null): T => {  // eslint-disable-line
@@ -22,4 +24,8 @@ export const computePageCount = (rowCountTotal: Int, rowCountVisible: Int): Int 
  */
 // eslint-disable-line
 export const computePageForRowIndex = (rowIndex: Int, pageSize: Int): Int => rowIndex < pageSize ? 0 : Math.floor(rowIndex / pageSize); // eslint-disable-line
+
+export type UseState<T> = [T, Dispatch<SetStateAction<T>>];
+export type UseNum = UseState<number>;
+export type UseBool = UseState<boolean>;
 

@@ -1,54 +1,86 @@
 import * as React from "react";
-import {CSSProperties, FC, useMemo, useRef} from "react";
-import {Theme} from "@material-ui/core";
-import makeStyles from "@material-ui/styles/makeStyles";
+import {CSSProperties, FC, MutableRefObject, ReactChild, useRef} from "react";
+// import {StyleRulesCallback, Theme} from "@material-ui/core";
 import {InView, RootEl, Row, SetChildRef, useIntersection} from "./intersection-observer";
 import {Int} from "./util";
+import {StyleRules} from "@material-ui/styles";
+import {StyleRulesCallback} from "@material-ui/styles/withStyles";
+import {Theme} from "@material-ui/core";
 
-const useStyles = makeStyles((theme: Theme) => {
-    return {
-        topDiv: {
-            overflowY: "scroll"
-        },
-        table: {
-            borderCollapse: "collapse"
-        },
-        rowInnerDivLite: {
-            display: "flex",
-        },
-        rowInnerTdLite: {},
-        rowInnerDivHeavy: {
-            display: "flex",
-        },
-        rowInnerTdHeavy: {
-            borderWidth: 1,
-            borderStyle: "solid",
-            borderColor: theme.palette.divider
-        },
-        rowContainer: {
-            margin: 0,
-            padding: 0,
-            textAlign: "left"
-        },
+/*
+type ClassKey = 'root' | 'foo';
+type SRC = StyleRulesCallback<UITheme, any, ClassKey>;
+type SR = StyleRules<any, ClassKey>;
 
-    };
-});
+const useStyles: StylesHook<SRC> = makeStyles<SRC>((theme: Theme) => {
+ */
 
-interface RowOuter {
-    component?: "div" | "tr",      //tagName: [div] or tr  - default: div
-    rowHeight?: number,
-    style?: CSSProperties,   //if defined then added to: {height:`${rowHeight}rem`}
-    className?: string       //default: undefined
+export type LSClassKey =
+    | "root"
+
+
+    | "divHead"
+    | "tableHead"
+    | "trHead"
+    | "th"
+
+    | "divBody"
+    | "tableBody"
+    | "trBody"
+    | "td"
+
+    ;
+
+export type LSSRC = StyleRulesCallback<Theme, any, LSClassKey>;
+export type LSSR = StyleRules<any, LSClassKey>;
+
+export type LazyScrollClasses = {
+    root: string,
+    divBody: string,
+    divHead: string,
+    tableHead: string,
+    tableBody: string,
+    trHead: string,
+    trBody: string,
+    td: string,
+    th: string,
+
 }
 
-interface RowInner {
-    heavy: RowVu,
-    lite?: RowVu,
+
+type RowTag = "div" | "tr";
+
+export interface RowContentProps {
+    p: LazyScrollProps,
+    d: RowData
 }
 
-interface RowSpec {
-    rowOuter: RowOuter;
-    rowInner: RowInner;
+export type RowContentHead = FC<LazyScrollProps>;
+export type RowContentBody = FC<RowContentProps>;
+
+export interface RowSpec {
+    rowTag?: RowTag;      //tagName: [div] or tr  - default: div
+    rowHeight?: number;
+    rowStyle?: CSSProperties;   //if defined then added to: {height:`${rowHeight}rem`}
+}
+
+export interface RowSpecHead extends RowSpec {
+    rowContent: RowContentHead;
+    hide?: boolean;
+}
+
+export interface RowSpecBody extends RowSpec {
+    rowContent: RowContentBody;
+}
+
+
+export interface RowData {
+    row: Row;
+    rowIndex: Int;
+}
+
+export interface IntersectProps {
+    root: RootEl | null;
 }
 
 export interface RowProps extends RowSpec {
@@ -60,114 +92,301 @@ export interface RowProps extends RowSpec {
 export type RowVu = FC<RowProps>;
 
 
-const LiteInnerDefault: RowVu = (p: RowProps) => {
-    const classes = useStyles();
-    const key = p.row.id.toString();
-    const {rowInner, rowOuter} = p;
-    const {lite} = rowInner;
+export type LazyRowProps = LazyScrollProps & IntersectProps & RowData ;
 
-    if (!!lite) {
-        const Lite: RowVu = lite;
-        return <Lite {...p} />;
-    }
-
-    const effectiveOuterComponent = !!rowOuter.component ? rowOuter.component : "div";
-    if (effectiveOuterComponent === "div") {
-        return <div key={key} className={classes.rowInnerDivLite}>Loading...</div>;
-    } else if (effectiveOuterComponent === "tr") {
-        const colSpan = !!p.colCount ? p.colCount : 1;
-        return <td key={key} className={classes.rowInnerTdLite} colSpan={colSpan}>Loading...</td>;
-    } else {
-        throw Error();
-    }
-
-};
-
-
-function LazyRow(p: RowProps & { root: RootEl | null }) {
-    const root = p.root;
-    const [setChildRef, inView]: [SetChildRef, InView] = useIntersection({root});
-    const pp = {...p, setChildRef, inView};
-    delete pp.root;
-    return <LazyRowVu  {...pp} />;
-
-}
-
-function LazyRowVu(p: RowProps & { setChildRef: any, inView: boolean }) {
-    const {row, rowInner, rowOuter, setChildRef, inView} = p;
-    const {heavy, lite} = rowInner;
-
-    const Heavy = heavy;
-    const Lite = !!lite ? lite : LiteInnerDefault;
-
-    const id: number = row.id;
-    const key: string = id.toString();
-
-    const outerRowStyleDefault: CSSProperties = useMemo(() => ({height: `${rowOuter.rowHeight}rem`}), [rowOuter.rowHeight]);
-    const outerRowStyleEffective = !!rowOuter.style ? {...rowOuter.style, ...outerRowStyleDefault} : outerRowStyleDefault;
-
-    const Inner = inView ? Heavy : Lite;
-
-    const outerTagName: string = typeof rowOuter.component === "string" ? rowOuter.component : "div";
-    const outerProps = {key, ref: setChildRef, className: rowOuter.className, style: outerRowStyleEffective};
-
-    const outerChildren = <Inner {...p} />;
-
-    return React.createElement(
-        outerTagName,
-        outerProps,
-        outerChildren
-    );
-
-
+function LazyRow(p: LazyRowProps) {
+    const cr = CLazyRow.mk2(p);
+    const [setChildRef, inView]: [SetChildRef, InView] = useIntersection({root: p.root});
+    return cr.mkRowElement(setChildRef, inView);
 }
 
 
-const ROW_COUNT_VISIBLE_DEFAULT: Int = 10;
-const ROW_HEIGHT_DEFAULT: number = 1;  //rem
-
-
-interface LazyScrollProps extends RowSpec {
-    colCount?: number;
+export interface LazyScrollProps {
+    classes: LazyScrollClasses,
+    rowSpecBody: RowSpecBody;
+    rowSpecHead: RowSpecHead;
+    rowSpecFoot: RowSpecHead;
+    colCount?: Int;
+    rowCountVisible?: number;
     rows: readonly Row[],
-    rowCountVisible?: number,
+    onShowSettings?: VoidFunction
+}
+
+export class CLazyRow {
+    rowData: RowData;
+    c: CLazyScroll;
+
+
+    constructor(c: CLazyScroll, rowData: RowData) {
+        this.c = c;
+        this.rowData = rowData;
+    }
+
+    get classes(): LazyScrollClasses {
+        return this.c.classes;
+    }
+
+    get row(): Row {
+        return this.rowData.row;
+    }
+
+    get colSpan(): Int {
+        return this.c.colSpan;
+    }
+
+    get id(): Int {
+        return this.rowData.row.id;
+    }
+
+    get key(): string {
+        return this.id.toString();
+    }
+
+    get lazyScroll(): CLazyScroll {
+        return this.c;
+    }
+
+    get rowTag(): RowTag {
+        return this.c.rowTagBody;
+    }
+
+
+    get rowSpecBody(): RowSpecBody {
+        return this.lazyScroll.rowSpecBody;
+    }
+
+
+    get rowSpecHead(): RowSpecHead {
+        return this.lazyScroll.rowSpecHead;
+    }
+
+    get mkContentLite(): RowContentBody {
+        // noinspection JSUnusedLocalSymbols
+        return (p: RowContentProps) => {  // eslint-disable-line
+            const classes = this.c.props.classes;
+            const m = this;
+            return <td key={m.key} className={classes.td} colSpan={m.colSpan}>&nbsp;</td>;
+        };
+    }
+
+    static mk(p: LazyScrollProps, d: RowData): CLazyRow {
+        const c = CLazyScroll.mk(p);
+        return new CLazyRow(c, d);
+    }
+
+    static mk2(props: LazyRowProps): CLazyRow {
+        const p: LazyScrollProps = props;
+        const d: RowData = props;
+        return this.mk(p, d);
+    }
+
+    mkRowPropsBody(ref: SetChildRef): { ref: SetChildRef, classes: LazyScrollClasses, style: CSSProperties } {
+        const m = this;
+        const c: CLazyScroll = m.c;
+        const style = c.rowStyleDynBody;
+        const classes = c.classes;
+        return {ref, classes, style};
+    }
+
+    mkRowPropsHead(ref: SetChildRef): { ref: SetChildRef, classes: LazyScrollClasses, style: CSSProperties } {
+        const m = this;
+        const c: CLazyScroll = m.c;
+        const style = c.rowStyleDynHead;
+        const classes = c.classes;
+        return {ref, classes, style};
+    }
+
+    mkRowContentBody(inView: InView): ReactChild {
+        const RowContentInView: RowContentBody = this.rowSpecBody.rowContent;
+        const RowContentOutView: RowContentBody = this.mkContentLite;
+        const p = this.c.props;
+        const d = this.rowData;
+        const pp = {p, d};
+        if (inView) {
+            return <RowContentInView {...pp}/>;
+        } else {
+            return <RowContentOutView {...pp}/>;
+        }
+    }
+
+    mkRowElement(setChildRef: SetChildRef, inView: InView) {
+        const m = this;
+        return React.createElement(
+            m.rowTag,
+            m.mkRowPropsBody(setChildRef),
+            m.mkRowContentBody(inView)
+        );
+    }
+
+}
+
+export class CLazyScroll {
+
+    static readonly DEFAULT_ROW_TAG_NAME: RowTag = "tr";
+    static readonly DEFAULT_ROW_COUNT_VISIBLE: Int = 20;
+    static readonly DEFAULT_ROW_HEIGHT: number = 1;  //rem
+    static readonly DEFAULT_COL_SPAN: Int = 1;
+
+    props: LazyScrollProps;
+
+    constructor(props: LazyScrollProps) {
+        this.props = props;
+    }
+
+    get classes(): LazyScrollClasses {
+        return this.props.classes;
+    }
+
+
+    get rowTagBody(): RowTag {
+        const c = this.props.rowSpecBody.rowTag;
+        const d = CLazyScroll.DEFAULT_ROW_TAG_NAME;
+        return !c ? d : c;
+    }
+
+    get rowTagHead(): RowTag {
+        const c = this.props.rowSpecHead.rowTag;
+        const d = CLazyScroll.DEFAULT_ROW_TAG_NAME;
+        return !c ? d : c;
+    }
+
+
+    get rowCountVisible(): Int {
+        const p = this.props;
+        return !!p.rowCountVisible ? p.rowCountVisible : CLazyScroll.DEFAULT_ROW_COUNT_VISIBLE;
+    }
+
+    get rowSpecHead(): RowSpecHead {
+        const p = this.props;
+        return p.rowSpecHead;
+    }
+
+    get rowSpecBody(): RowSpecBody {
+        const p = this.props;
+        return p.rowSpecBody;
+    }
+
+    //in rems
+    get rowHeightBody(): Int {
+        const h = this.rowSpecBody.rowHeight;
+        return !!h ? h : CLazyScroll.DEFAULT_ROW_HEIGHT;
+    }
+
+    get rowHeightHead(): Int {
+        const h = this.rowSpecHead.rowHeight;
+        return !!h ? h : CLazyScroll.DEFAULT_ROW_HEIGHT;
+    }
+
+    //in rems
+    get rootHeight(): number {
+        return this.rowCountVisible * this.rowHeightBody;
+    }
+
+    get rootStyleDyn(): CSSProperties {
+        return {height: `${this.rootHeight}rem`};
+    }
+
+    get rowStyleDynBody(): CSSProperties {
+        const rowHeight: number = this.rowHeightBody;
+        const rowStyleDefault: CSSProperties = ({height: `${rowHeight}rem`});
+        const rowStyleProvided: CSSProperties | undefined = this.props.rowSpecBody.rowStyle;
+        return !!rowStyleProvided ? {...rowStyleProvided, ...rowStyleDefault} : rowStyleDefault;
+    }
+
+    get rowStyleDynHead(): CSSProperties {
+        const rowHeight: number = this.rowHeightHead;
+        const rowStyleDefault: CSSProperties = ({height: `${rowHeight}rem`});
+        const rowStyleProvided: CSSProperties | undefined = this.props.rowSpecHead.rowStyle;
+        return !!rowStyleProvided ? {...rowStyleProvided, ...rowStyleDefault} : rowStyleDefault;
+    }
+
+
+    get colSpan(): Int {
+        const s = this.props.colCount;
+        return !!s ? s : CLazyScroll.DEFAULT_COL_SPAN;
+    }
+
+    static mk(p: LazyScrollProps): CLazyScroll {
+        return new CLazyScroll(p);
+    }
+
+    mkRow(d: RowData): CLazyRow {
+        return CLazyRow.mk(this.props, d);
+    }
+
+    mkRowContentBody(rowData: RowData, inView: InView): ReactChild {
+        const cr = CLazyRow.mk(this.props, rowData);
+        return cr.mkRowContentBody(inView);
+    }
+
+    mkRowPropsBody(ref: SetChildRef, rowData: RowData): { ref: SetChildRef, classes: LazyScrollClasses, style: CSSProperties } {
+        const cr = CLazyRow.mk(this.props, rowData);
+        return cr.mkRowPropsBody(ref);
+    }
 }
 
 export const LazyScroll = (p: LazyScrollProps) => {
-    const classes = useStyles();
-    const rootRef = useRef<Element | null>(null);
+    const c: CLazyScroll = new CLazyScroll(p);
+    const cc: LazyScrollClasses = p.classes;
+    const rootRef: MutableRefObject<RootEl | null> = useRef<RootEl | null>(null);
 
+    // const rowCountVisible: Int = c.rowCountVisible;
+    // const rowHeight: number = c.rowHeight;
+    // const rootStyleDyn: CSSProperties = useMemo(() => c.rootStyleDyn, [rowCountVisible, rowHeight]);
 
-    const rowCountVisible: Int = !!p.rowCountVisible ? p.rowCountVisible : ROW_COUNT_VISIBLE_DEFAULT;
-    const rowHeight: number = !!p.rowOuter.rowHeight ? p.rowOuter.rowHeight : ROW_HEIGHT_DEFAULT;
-
-    const parentStyle: CSSProperties = useMemo(() => ({height: `${rowCountVisible * rowHeight}rem`}), [rowCountVisible, rowHeight]);
-
-    const setRootRef = React.useCallback((el: RootEl | null) => rootRef.current = el, [rootRef]);
+    const setRootRef = React.useCallback((el: RootEl | null) => rootRef.current = el, [rootRef.current]); // eslint-disable-line
 
     function mkRow(row: Row, rowIndex: Int): React.ReactNode {
-        const key = row.id.toString();
-        const root = rootRef.current;
-        return <LazyRow key={key} rowInner={p.rowInner} rowOuter={p.rowOuter} root={root} row={row}
-                        colCount={p.colCount}
-                        rowIndex={rowIndex}/>;
+        const root: RootEl | null = rootRef.current;
+        const d: RowData = {row, rowIndex};
+        const cr: CLazyRow = CLazyRow.mk(p, d);
+        const pp: LazyRowProps = {...p, ...d, root};
+        return <LazyRow key={cr.key} {...pp} />;
     }
 
-    if (p.rowOuter.component === "div") {
-        return <div className={classes.topDiv} style={parentStyle} ref={setRootRef}>
-            {p.rows.map(mkRow)}
-        </div>;
-    } else if (p.rowOuter.component === "tr") {
-        return <div className={classes.topDiv} style={parentStyle} ref={setRootRef}>
-            <table className={classes.table}>
+
+    const rowSpecHead = p.rowSpecHead;
+    const rowSpecFoot = p.rowSpecFoot;
+    const RowContentHead = rowSpecHead.rowContent;
+
+    const FOOTER_NON_TD = "FooterNonTd";
+    const onClick = (e: React.MouseEvent) => {
+        const target: any = e.nativeEvent.target;
+        const dataValue = target.getAttribute("data-value");
+        if (dataValue === FOOTER_NON_TD && p.onShowSettings) {
+            p.onShowSettings();
+        }
+    };
+
+    return <div className={cc.root} style={{padding: 0, margin: 0}}>
+        <div className={cc.divHead} style={{display: rowSpecHead.hide ? "none" : ""}}>
+            <table className={cc.tableHead}>
+                <thead>
+                <tr className={cc.trHead} style={c.rowStyleDynHead}>
+                    <RowContentHead {...p} />
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <div className={cc.divBody} ref={setRootRef} style={c.rootStyleDyn}>
+            <table className={cc.tableBody}>
                 <tbody>
                 {p.rows.map(mkRow)}
                 </tbody>
             </table>
-        </div>;
-    } else {
-        throw Error();
-    }
-
+        </div>
+        <div data-value={FOOTER_NON_TD} className={cc.divHead}
+             style={{display: rowSpecFoot.hide ? "none" : "", margin: 0}}
+             onMouseUpCapture={onClick}
+        >
+            <table className={cc.tableHead}>
+                <thead>
+                <tr className={cc.trHead} style={c.rowStyleDynHead}>
+                    <RowContentHead {...p} />
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>;
 
 };

@@ -32,7 +32,8 @@ const getObserverForRoot = (root: RootEl | null): IntersectionObserver => {
     let o: IntersectionObserver | undefined = rootMap.get(root);
     if (!o) {
         const options: IntersectionObserverInit = {
-            root
+            root,
+            threshold:1.0
         };
         o = new IntersectionObserver(onIntersectionChange, options);
         rootMap.set(root, o);

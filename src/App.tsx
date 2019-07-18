@@ -1,5 +1,5 @@
 import * as React from "react";
-import {CSSProperties, useState} from "react";
+import {useState} from "react";
 import {
     CLazyRow,
     CLazyScroll,
@@ -122,25 +122,11 @@ const RowContentBody = ({p, d}: RowContentProps) => {
 // noinspection JSUnusedLocalSymbols
 const RowContentHead = (p: LazyScrollProps & { head: boolean }) => {  // eslint-disable-line
     const c2: AppClasses = useStyles2();
-
-
-    const sHead: CSSProperties = {
-        borderBottomWidth: 0,
-        borderBottomStyle: "none",
-    };
-
-    const sFoot: CSSProperties = {
-        borderTopWidth: 0,
-        borderTopStyle: "none",
-    };
-
-    const s = p.head ? sHead : sFoot;
-
     return <>
-        <td className={c2.idTh} style={s}>ID</td>
-        <td className={c2.firstNameTh} style={s}>First Name</td>
-        <td className={c2.lastNameTh} style={s}>Last Name</td>
-        <td className={c2.stateTh} style={s}>State</td>
+        <td className={c2.idTh}>ID</td>
+        <td className={c2.firstNameTh}>First Name</td>
+        <td className={c2.lastNameTh}>Last Name</td>
+        <td className={c2.stateTh}>State</td>
     </>;
 };
 

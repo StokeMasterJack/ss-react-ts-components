@@ -1,6 +1,8 @@
-import {Row} from "./components/intersection";
 import axios, {AxiosResponse} from "axios";
-import {UseState} from "./components/util";
+
+import {Row} from "components/intersection";
+
+import {UseState} from "components/util";
 
 export interface Emp extends Row {
     id: number;

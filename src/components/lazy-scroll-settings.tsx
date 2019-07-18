@@ -10,8 +10,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 
-import {CLazyScroll} from "./lazy-scroll";
-import {UseBool, UseNum} from "./util";
+import {CLazyScroll} from "components/lazy-scroll";
+import {UseBool, UseNum} from "components/util";
 
 
 export interface LazyScrollSettings {

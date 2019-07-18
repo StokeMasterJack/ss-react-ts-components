@@ -1,6 +1,8 @@
-import {CLazyScroll, LazyScrollClasses, LazyScrollStyles, LazyScrollTheme} from "./components/lazy-scroll";
+
 import {CSSProperties} from "react";
 import makeStyles from "@material-ui/styles/makeStyles/makeStyles";
+
+import {CLazyScroll, LazyScrollClasses, LazyScrollStyles, LazyScrollTheme} from "components/lazy-scroll";
 
 
 interface AppStyles {

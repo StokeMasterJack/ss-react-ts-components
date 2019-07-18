@@ -9,14 +9,13 @@ import {
     RowContentProps,
     RowSpecBody,
     RowSpecHead
-} from "./lazy-scroll";
+} from "./components/lazy-scroll";
 import createMuiTheme, {Theme} from "@material-ui/core/styles/createMuiTheme";
 
 import empSampleData from "./emp-sample-data";
 import {EmpFull} from "./emp-types";
-import makeStyles, {StylesHook} from "@material-ui/styles/makeStyles";
+import makeStyles from "@material-ui/styles/makeStyles";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
-import {StyleRules, StyleRulesCallback} from "@material-ui/styles/withStyles";
 import {TextField} from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -32,16 +31,14 @@ export type ClassKey = LSClassKey
     | "firstName"
     | "lastName"
     | "state"
+
     | "idTh"
     | "firstNameTh"
     | "lastNameTh"
     | "stateTh"
     ;
 
-export type SRC = StyleRulesCallback<Theme, any, ClassKey>;
-export type SR = StyleRules<any, ClassKey>;
-
-const useStyles: StylesHook<SRC> = makeStyles<SRC>((theme: Theme): SR => {
+const useStyles = makeStyles((theme: Theme) => {
 
     const td_ = {
         borderWidth: 1,
@@ -320,8 +317,9 @@ const LazyScrollSettings = ({a1, a2, a3, o1, o2, o3}: { a1: NN, a2: NN, a3: NN, 
                                InputProps={inputProps}/>
                 </div>
                 <div style={{display: "flex", flexDirection: "row"}}>
-                    <div style={{display: "flex", flexDirection: "row", alignItems: "center",marginRight:'1rem'}}><Checkbox
-                        checked={showHeader} onChange={mkOnBoolChange(showHeader, setShowHeader)}/> Show Header
+                    <div style={{display: "flex", flexDirection: "row", alignItems: "center", marginRight: "1rem"}}>
+                        <Checkbox
+                            checked={showHeader} onChange={mkOnBoolChange(showHeader, setShowHeader)}/> Show Header
                     </div>
                     <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}><Checkbox
                         checked={showFooter} onChange={mkOnBoolChange(showFooter, setShowFooter)}/> Show Footer

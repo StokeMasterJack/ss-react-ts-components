@@ -1,19 +1,7 @@
 import * as React from "react";
 import {CSSProperties, FC, MutableRefObject, ReactChild, useRef} from "react";
-// import {StyleRulesCallback, Theme} from "@material-ui/core";
 import {InView, RootEl, Row, SetChildRef, useIntersection} from "./intersection-observer";
 import {Int} from "./util";
-import {StyleRules} from "@material-ui/styles";
-import {StyleRulesCallback} from "@material-ui/styles/withStyles";
-import {Theme} from "@material-ui/core";
-
-/*
-type ClassKey = 'root' | 'foo';
-type SRC = StyleRulesCallback<UITheme, any, ClassKey>;
-type SR = StyleRules<any, ClassKey>;
-
-const useStyles: StylesHook<SRC> = makeStyles<SRC>((theme: Theme) => {
- */
 
 export type LSClassKey =
     | "root"
@@ -31,8 +19,6 @@ export type LSClassKey =
 
     ;
 
-export type LSSRC = StyleRulesCallback<Theme, any, LSClassKey>;
-export type LSSR = StyleRules<any, LSClassKey>;
 
 export type LazyScrollClasses = {
     root: string,

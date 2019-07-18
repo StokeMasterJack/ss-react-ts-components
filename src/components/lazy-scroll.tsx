@@ -1,6 +1,6 @@
 import * as React from "react";
 import {CSSProperties, Dispatch, FC, MutableRefObject, ReactChild, SetStateAction, useRef} from "react";
-import {InView, RootEl, Row, SetChildRef, useIntersection} from "./intersection-observer";
+import {InView, RootEl, Row, SetChildRef, useIntersection} from "./intersection";
 import {Int} from "./util";
 
 export type LSClassKey =

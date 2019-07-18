@@ -1,15 +1,14 @@
 {
-  "name": "ford-lazy-scroll",
+  "name": "ss-react-ts-components",
   "version": "0.1.0",
-  "description": "lazy-scroll",
+  "description": "ss-react-ts-components",
   "author": "Dave Ford <dford@smart-soft.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/thebuilder/react-intersection-observer.git"
+    "url": "https://github.com/StokeMasterJack/ss-react-ts-components.git"
   },
   "main": "build/js/my-awesome-lib.js",
-  "private": true,
   "dependencies": {
     "@material-ui/core": "^4.2.1",
     "@material-ui/styles": "^4.2.1",

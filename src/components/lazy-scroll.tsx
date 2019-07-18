@@ -24,6 +24,7 @@ export type LazyScrollClasses = {
     root: string,
     divBody: string,
     divHead: string,
+    divFoot: string,
     tableHead: string,
     tableBody: string,
     trHead: string,
@@ -31,6 +32,31 @@ export type LazyScrollClasses = {
     td: string,
     th: string,
 
+}
+
+export type LazyScrollStyles = {
+    root: any,
+    divBody: any,
+    divHead: any,
+    divFoot: any,
+    tableHead: any,
+    tableBody: any,
+    trHead: any,
+    trBody: any,
+    td: any,
+    th: any,
+
+}
+
+export interface LazyScrollTheme {
+    fontFamily: string;  //Roboto, Arial, sans-serif
+    borderColor: string;  //theme.palette.divider
+    tdBackgroundColor: string;  // white
+    thBackgroundColor: string;  //  theme.palette.background.default
+    tdColor: string;  //  "rgba(0, 0, 0, 0.87) !important"
+    thColor: string;  //  "rgba(0, 0, 0, 0.87) !important"
+    tdFontSize: Int;  //12
+    rootBorderColor: string;  //theme.palette.secondary.dark,
 }
 
 
@@ -41,7 +67,7 @@ export interface RowContentProps {
     d: RowData
 }
 
-export type RowContentHead = FC<LazyScrollProps>;
+export type RowContentHead = FC<LazyScrollProps & { head: boolean }>;
 export type RowContentBody = FC<RowContentProps>;
 
 export interface RowSpec {
@@ -89,6 +115,7 @@ function LazyRow(p: LazyRowProps) {
 
 export interface LazyScrollProps {
     classes: LazyScrollClasses,
+    theme?: LazyScrollTheme,
     rowSpecBody: RowSpecBody;
     rowSpecHead: RowSpecHead;
     rowSpecFoot: RowSpecHead;
@@ -228,7 +255,6 @@ export class CLazyScroll {
         return this.props.classes;
     }
 
-
     get rowTagBody(): RowTag {
         const c = this.props.rowSpecBody.rowTag;
         const d = CLazyScroll.DEFAULT_ROW_TAG_NAME;
@@ -240,7 +266,6 @@ export class CLazyScroll {
         const d = CLazyScroll.DEFAULT_ROW_TAG_NAME;
         return !c ? d : c;
     }
-
 
     get rowCountVisible(): Int {
         const p = this.props;
@@ -291,11 +316,112 @@ export class CLazyScroll {
         return !!rowStyleProvided ? {...rowStyleProvided, ...rowStyleDefault} : rowStyleDefault;
     }
 
-
     get colSpan(): Int {
         const s = this.props.colCount;
         return !!s ? s : CLazyScroll.DEFAULT_COL_SPAN;
     }
+
+    static mkDefaultLazyScrollTheme(): LazyScrollTheme {
+        return {
+            fontFamily: "Roboto, Arial, sans-serif",
+            borderColor: "rgba(0, 0, 0, 0.12)",  //theme.palette.divider
+            tdBackgroundColor: "white", //  theme.palette.background.default
+            thBackgroundColor: "#fafafa", //  theme.palette.background.default
+            tdColor: "rgba(0, 0, 0, 0.87)",  //  "rgba(0, 0, 0, 0.87) !important"
+            thColor: "rgba(0, 0, 0, 0.87)",  //  "rgba(0, 0, 0, 0.87) !important"
+            tdFontSize: 12, //12
+            rootBorderColor: "#c51162"  //theme.palette.secondary.dark,
+        };
+    };
+
+    static mkCoreStyles(theme: LazyScrollTheme): LazyScrollStyles {
+
+        const headLineWidth = 1;
+        const headLineColor = "rgba(197, 17, 98,.3)";
+        const headBoxShadow = "0 2px 2px -1px rgba(0, 0, 0, 0.4)";
+
+        const td_ = {
+            borderWidth: 1,
+            borderStyle: "solid",
+            borderColor: theme.borderColor,
+            fontSize: theme.tdFontSize,
+            fontFamily: theme.fontFamily,
+            color: theme.tdColor,
+            backgroundColor: theme.tdBackgroundColor
+        };
+
+        const th_ = {
+            ...td_,
+            backgroundColor: theme.thBackgroundColor,
+            boxShadow: headBoxShadow
+        };
+
+
+        return {
+            root: {
+                width: "100%",
+                borderWidth: 1,
+                borderStyle: "solid",
+                borderColor: headLineColor,
+                margin: 0,
+                padding: 0,
+            },
+            divHead: {
+                overflowY: "scroll",
+                padding: 0,
+                margin: 0,
+                borderBottomStyle: "solid",
+                borderBottomWidth: headLineWidth,
+                borderBottomColor: headLineColor,
+            },
+            divFoot: {
+                overflowY: "scroll",
+                padding: 0,
+                margin: 0,
+                borderTopStyle: "solid",
+                borderTopWidth: headLineWidth,
+                borderTopColor: headLineColor,
+            },
+            divBody: {
+                overflowY: "scroll",
+                padding: 0,
+                margin: 0,
+                borderStyle: "none"
+            },
+            tableBody: {
+                borderCollapse: "collapse",
+                width: "100%",
+                padding: 0,
+                margin: 0,
+                borderStyle: "none"
+            },
+            tableHead: {
+                borderCollapse: "collapse",
+                width: "100%",
+                padding: 0,
+                margin: 0,
+
+            },
+            trHead: {
+                // backgroundColor: theme.thBackgroundColor,
+                padding: 0,
+                margin: 0,
+
+            },
+            trBody: {
+                borderStyle: "none"
+            },
+            td: {
+                ...td_
+            },
+            th: {
+                ...th_,
+                boxShadow: headBoxShadow
+            }
+        };
+
+    };
+
 
     static mk(p: LazyScrollProps): CLazyScroll {
         return new CLazyScroll(p);
@@ -316,8 +442,11 @@ export class CLazyScroll {
     }
 }
 
+
 export const LazyScroll = (p: LazyScrollProps) => {
     const c: CLazyScroll = new CLazyScroll(p);
+
+
     const cc: LazyScrollClasses = p.classes;
     const rootRef: MutableRefObject<RootEl | null> = useRef<RootEl | null>(null);
 
@@ -349,12 +478,27 @@ export const LazyScroll = (p: LazyScrollProps) => {
         }
     };
 
+
+    const ww = 1;
+    const sHead: CSSProperties = {
+        borderBottomStyle: "solid",
+        borderBottomWidth: ww,
+        borderBottomColor: "rgba(0, 0, 0, 0.12)"
+    };
+
+    const sFoot: CSSProperties = {
+        borderTopStyle: "solid",
+        borderTopWidth: ww,
+        borderTopColor: "rgba(0, 0, 0, 0.12)"
+    };
+
+
     return <div className={cc.root} style={{padding: 0, margin: 0}}>
         <div className={cc.divHead} style={{display: rowSpecHead.hide ? "none" : ""}}>
-            <table className={cc.tableHead}>
+            <table className={cc.tableHead} style={sHead}>
                 <thead>
                 <tr className={cc.trHead} style={c.rowStyleDynHead}>
-                    <RowContentHead {...p} />
+                    <RowContentHead {...{...p, head: true}} />
                 </tr>
                 </thead>
             </table>
@@ -366,14 +510,14 @@ export const LazyScroll = (p: LazyScrollProps) => {
                 </tbody>
             </table>
         </div>
-        <div data-value={FOOTER_NON_TD} className={cc.divHead}
+        <div data-value={FOOTER_NON_TD} className={cc.divFoot}
              style={{display: rowSpecFoot.hide ? "none" : "", margin: 0}}
              onMouseUpCapture={onClick}
         >
-            <table className={cc.tableHead}>
+            <table className={cc.tableHead} style={sFoot}>
                 <thead>
                 <tr className={cc.trHead} style={c.rowStyleDynHead}>
-                    <RowContentHead {...p} />
+                    <RowContentHead {...{...p, head: false}} />
                 </tr>
                 </thead>
             </table>

@@ -1,11 +1,12 @@
 import * as React from "react";
-import {useState} from "react";
+import {CSSProperties, useState} from "react";
 import {
     CLazyRow,
     CLazyScroll,
     LazyScroll,
     LazyScrollProps,
-    LSClassKey,
+    LazyScrollStyles,
+    LazyScrollTheme,
     RowContentProps,
     RowSpecBody,
     RowSpecHead
@@ -19,7 +20,19 @@ import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import {LazyScrollSettings, LazyScrollSettingsDialog} from "./components/lazy-scroll-settings";
 
 
-export type ClassKey = LSClassKey
+// export type ClassKey = LSClassKey
+//     | "id"
+//     | "firstName"
+//     | "lastName"
+//     | "state"
+//
+//     | "idTh"
+//     | "firstNameTh"
+//     | "lastNameTh"
+//     | "stateTh"
+//     ;
+
+export type ClassKey =
     | "id"
     | "firstName"
     | "lastName"
@@ -31,135 +44,122 @@ export type ClassKey = LSClassKey
     | "stateTh"
     ;
 
-const useStyles = makeStyles((theme: Theme) => {
 
-    const td_ = {
-        borderWidth: 1,
-        borderStyle: "solid",
-        borderColor: theme.palette.divider,
-        fontSize: 12,
-        fontFamily: "Roboto, Arial, sans-serif",
-        color: "rgba(0, 0, 0, 0.87) !important"
+interface AppStyles {
+
+    idTd: any;
+    firstNameTd: any;
+    lastNameTd: any;
+    stateTd: any;
+
+
+    idTh: any;
+    firstNameTh: any;
+    lastNameTh: any;
+    stateTh: any;
+
+}
+
+export type AppClasses = {
+    idTd: string;
+    firstNameTd: string;
+    lastNameTd: string;
+    stateTd: string;
+
+
+    idTh: string;
+    firstNameTh: string;
+    lastNameTh: string;
+    stateTh: string;
+
+}
+
+const theme: LazyScrollTheme = CLazyScroll.mkDefaultLazyScrollTheme();
+const styles1: LazyScrollStyles = CLazyScroll.mkCoreStyles(theme);
+const mkAppStyles = (t: LazyScrollTheme): AppStyles => {
+
+    const td = styles1.td;
+    // const headBoxShadowHead = "0 2px 2px -1px rgba(0, 0, 0, 0.4)";
+    // const headBoxShadowFoot = "0 2px 2px 1px rgba(0, 0, 0, 0.4)";
+
+    const th = {
+        backgroundColor: t.thBackgroundColor
     };
 
-    const th_ = {
-        borderWidth: 1,
-        borderStyle: "solid",
-        borderColor: theme.palette.divider,
-        fontSize: 12,
-        fontFamily: "Roboto, Arial, sans-serif",
-        color: "rgba(0, 0, 0, 0.87) !important",
-        backgroundColor: theme.palette.background.default,
-        // borderBottomColor:  theme.palette.secondary.dark
-    };
+
+    const idTd = {...td, width: 60};
+    const firstNameTd = {...td, width: 200};
+    const lastNameTd = {...td, width: 200};
+    const stateTd = {...td, width: 40};
+
+    const idTh = {...idTd, ...th};
+    const firstNameTh = {...firstNameTd, ...th};
+    const lastNameTh = {...lastNameTd, ...th};
+    const stateTh = {...stateTd, ...th};
+
     return {
-        root: {
-            width: "100%",
-            borderWidth: 2,
-            borderStyle: "solid",
-            borderColor: theme.palette.secondary.dark,
-            margin: 0,
-            padding: 0
-        },
-        divHead: {
-            overflowY: "scroll",
-            padding: 0,
-            margin: 0
-        },
-        divBody: {
-            overflowY: "scroll",
-            padding: 0,
-            margin: 0
-        },
-        tableBody: {
-            borderCollapse: "collapse",
-            width: "100%",
-            padding: 0,
-            margin: 0
-        },
-        tableHead: {
-            borderCollapse: "collapse",
-            width: "100%",
-            padding: 0,
-            margin: 0
-        },
-        trHead: {
-            backgroundColor: theme.palette.background.default,
-            padding: 0,
-            margin: 0
-        },
-        trBody: {},
-        td: {
-            ...td_
-        },
-        th: {
-            ...th_
-        },
-        id: {
-            ...td_,
-            width: 60
-        },
-        firstName: {
-            ...td_,
-            width: 200
-        },
-        lastName: {
-            ...td_,
-            width: 200
-        },
-        state: {
-            ...td_,
-            width: 40
-        },
 
-        idTh: {
-            ...th_,
-            width: 60
-        },
-        firstNameTh: {
-            ...th_,
-            width: 200
-        },
-        lastNameTh: {
-            ...th_,
-            width: 200
-        },
-        stateTh: {
-            ...th_,
-            width: 40
-        },
+        idTd,
+        firstNameTd,
+        lastNameTd,
+        stateTd,
+
+
+        idTh,
+        firstNameTh,
+        lastNameTh,
+        stateTh,
 
     };
 
-});
+};
+const styles2: AppStyles = mkAppStyles(theme);
 
+
+const useStyles1 = makeStyles((): LazyScrollStyles => styles1);
+const useStyles2 = makeStyles((): AppStyles => styles2);
 
 const RowContentBody = ({p, d}: RowContentProps) => {
     const cr = CLazyRow.mk(p, d);
-    const classes = useStyles();
-    const r = cr.row as EmpFull;
+    const c2: AppClasses = useStyles2();
+
+    const r: EmpFull = cr.row as EmpFull;
     return <>
-        <td className={classes.id}>{cr.key}</td>
-        <td className={classes.firstName}>{r.firstName}</td>
-        <td className={classes.lastName}>{r.lastName}</td>
-        <td className={classes.state}>{r.state}</td>
+        <td className={c2.idTd}>{cr.key}</td>
+        <td className={c2.firstNameTd}>{r.firstName}</td>
+        <td className={c2.lastNameTd}>{r.lastName}</td>
+        <td className={c2.stateTd}>{r.state}</td>
     </>;
 };
 
 // noinspection JSUnusedLocalSymbols
-const RowContentHead = (p: LazyScrollProps) => {  // eslint-disable-line
-    const classes = useStyles();
+const RowContentHead = (p: LazyScrollProps & { head: boolean }) => {  // eslint-disable-line
+    const c2: AppClasses = useStyles2();
+
+
+    const sHead: CSSProperties = {
+        borderBottomWidth: 0,
+        borderBottomStyle: "none",
+    };
+
+    const sFoot: CSSProperties = {
+        borderTopWidth: 0,
+        borderTopStyle: "none",
+    };
+
+    const s = p.head ? sHead : sFoot;
 
     return <>
-        <td className={classes.idTh}>ID</td>
-        <td className={classes.firstNameTh}>First Name</td>
-        <td className={classes.lastNameTh}>Last Name</td>
-        <td className={classes.stateTh}>State</td>
+        <td className={c2.idTh} style={s}>ID</td>
+        <td className={c2.firstNameTh} style={s}>First Name</td>
+        <td className={c2.lastNameTh} style={s}>Last Name</td>
+        <td className={c2.stateTh} style={s}>State</td>
     </>;
 };
 
+
 const LazyScrollDemo = ({rowHeightHead, rowHeightBody, rowCountVisible, showHead, showFoot, onShowSettings}: { rowHeightHead: number, rowHeightBody: number, rowCountVisible: number, showHead: boolean, showFoot: boolean, onShowSettings: VoidFunction }) => {
-    const classes = useStyles();
+    const classes = useStyles1();
     const rowSpecHead: RowSpecHead = {
         rowContent: RowContentHead,
         rowHeight: rowHeightHead,
@@ -198,6 +198,7 @@ const App: React.FC = () => {
 
 
     const theme: Theme = createMuiTheme();  // eslint-disable-line
+
 
     const rowHeightHead_ = useState<number>(CLazyScroll.DEFAULT_ROW_HEIGHT_HEAD);
     const rowHeightBody_ = useState<number>(CLazyScroll.DEFAULT_ROW_HEIGHT_BODY);

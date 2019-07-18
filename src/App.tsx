@@ -1,17 +1,12 @@
 import * as React from "react";
-import {CSSProperties, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios, {AxiosResponse} from "axios";
-import createMuiTheme, {Theme} from "@material-ui/core/styles/createMuiTheme";
-import makeStyles from "@material-ui/styles/makeStyles";
-import ThemeProvider from "@material-ui/styles/ThemeProvider";
 
 import {
     CLazyRow,
     CLazyScroll,
     LazyScroll,
     LazyScrollProps,
-    LazyScrollStyles,
-    LazyScrollTheme,
     RowContentProps,
     RowSpecBody,
     RowSpecHead
@@ -19,94 +14,11 @@ import {
 import {EmpFull} from "./emp-types";
 
 import {LazyScrollSettings, LazyScrollSettingsDialog} from "./components/lazy-scroll-settings";
-
-export type ClassKey =
-    | "id"
-    | "firstName"
-    | "lastName"
-    | "state"
-
-    | "idTh"
-    | "firstNameTh"
-    | "lastNameTh"
-    | "stateTh"
-    ;
+import {AppClasses, mkStyles} from "./AppStyle";
 
 
-interface AppStyles {
+const [useStyles1, useStyles2] = mkStyles();
 
-    idTd: any;
-    firstNameTd: any;
-    lastNameTd: any;
-    stateTd: any;
-
-
-    idTh: any;
-    firstNameTh: any;
-    lastNameTh: any;
-    stateTh: any;
-
-}
-
-export type AppClasses = {
-    idTd: string;
-    firstNameTd: string;
-    lastNameTd: string;
-    stateTd: string;
-
-
-    idTh: string;
-    firstNameTh: string;
-    lastNameTh: string;
-    stateTh: string;
-
-}
-
-const theme: LazyScrollTheme = CLazyScroll.mkDefaultLazyScrollTheme();
-const styles1: LazyScrollStyles = CLazyScroll.mkCoreStyles(theme);
-
-type P = CSSProperties;
-const mkAppStyles = (t: LazyScrollTheme): AppStyles => {
-
-    const td = styles1.td;
-    // const headBoxShadowHead = "0 2px 2px -1px rgba(0, 0, 0, 0.4)";
-    // const headBoxShadowFoot = "0 2px 2px 1px rgba(0, 0, 0, 0.4)";
-
-    const th = {
-        backgroundColor: t.thBackgroundColor
-    };
-
-
-    const idTd: P = {...td, width: 60};
-    const firstNameTd: P = {...td, width: 200};
-    const lastNameTd: P = {...td, width: 200};
-    const stateTd: P = {...td, width: 40};
-
-    const idTh: P = {...idTd, ...th};
-    const firstNameTh: P = {...firstNameTd, ...th};
-    const lastNameTh: P = {...lastNameTd, ...th};
-    const stateTh: P = {...stateTd, ...th};
-
-    return {
-
-        idTd,
-        firstNameTd,
-        lastNameTd,
-        stateTd,
-
-
-        idTh,
-        firstNameTh,
-        lastNameTh,
-        stateTh,
-
-    };
-
-};
-const styles2: AppStyles = mkAppStyles(theme);
-
-const useStyles1 = makeStyles((): LazyScrollStyles => styles1);
-const useStyles2 = makeStyles((): AppStyles => styles2);
 
 const RowContentBody = ({p, d}: RowContentProps) => {
     const cr = CLazyRow.mk(p, d);
@@ -145,7 +57,7 @@ const LazyScrollDemo = (s: LazyScrollSettings) => {
 
     const [rows, setRows] = useState<readonly EmpFull[]>([]);
 
-    const classes = useStyles1();
+    const c1 = useStyles1();
     const rowSpecHead: RowSpecHead = {
         rowContent: RowContentHead,
         rowHeight: s.rowHeightHead_[0],
@@ -163,7 +75,7 @@ const LazyScrollDemo = (s: LazyScrollSettings) => {
 
     const colCount = 4;
     const ppp: LazyScrollProps = {
-        classes,
+        classes: c1,
         rowSpecHead,
         rowSpecFoot,
         rowSpecBody,
@@ -201,7 +113,6 @@ const LazyScrollDemo = (s: LazyScrollSettings) => {
 
 const App: React.FC = () => {
 
-    const theme: Theme = createMuiTheme();  // eslint-disable-line
 
     const rowHeightHead_ = useState<number>(CLazyScroll.DEFAULT_ROW_HEIGHT_HEAD);
     const rowHeightBody_ = useState<number>(CLazyScroll.DEFAULT_ROW_HEIGHT_BODY);
@@ -222,16 +133,14 @@ const App: React.FC = () => {
     };
 
     // noinspection RequiredAttributes
-    return (
-        <ThemeProvider theme={theme}>
-            <div style={{padding: 50, backgroundColor: ""}}>
-                <div style={{backgroundColor: "", padding: 0, margin: 0}}>
-                    <LazyScrollDemo {...lazyScrollSettings}/>
-                </div>
+    return <>
+        <div style={{padding: 50, backgroundColor: ""}}>
+            <div style={{backgroundColor: "", padding: 0, margin: 0}}>
+                <LazyScrollDemo {...lazyScrollSettings}/>
             </div>
-            <LazyScrollSettingsDialog  {...lazyScrollSettings}/>
-        </ThemeProvider>
-    );
+        </div>
+        <LazyScrollSettingsDialog  {...lazyScrollSettings}/>
+    </>;
 };
 
 export default App;

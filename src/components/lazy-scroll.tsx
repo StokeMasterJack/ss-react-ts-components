@@ -173,7 +173,7 @@ export class CLazyRow {
         return this.lazyScroll.rowSpecHead;
     }
 
-    get mkContentLite(): RowContentBody {
+    get mkRowContentLite(): RowContentBody {
         // noinspection JSUnusedLocalSymbols
         return (p: RowContentProps) => {  // eslint-disable-line
             const classes = this.c.props.classes;
@@ -211,7 +211,7 @@ export class CLazyRow {
 
     mkRowContentBody(inView: InView): ReactChild {
         const RowContentInView: RowContentBody = this.rowSpecBody.rowContent;
-        const RowContentOutView: RowContentBody = this.mkContentLite;
+        const RowContentOutView: RowContentBody = this.mkRowContentLite;
         const p = this.c.props;
         const d = this.rowData;
         const pp = {p, d};
@@ -467,7 +467,9 @@ export const LazyScroll = (p: LazyScrollProps) => {
 
     const rowSpecHead = p.rowSpecHead;
     const rowSpecFoot = p.rowSpecFoot;
+
     const RowContentHead = rowSpecHead.rowContent;
+    const RowContentFoot = rowSpecFoot.rowContent;
 
     const FOOTER_NON_TD = "FooterNonTd";
     const onClick = (e: React.MouseEvent) => {
@@ -517,7 +519,7 @@ export const LazyScroll = (p: LazyScrollProps) => {
             <table className={cc.tableHead} style={sFoot}>
                 <thead>
                 <tr className={cc.trHead} style={c.rowStyleDynHead}>
-                    <RowContentHead {...{...p, head: false}} />
+                    <RowContentFoot {...{...p, head: false}} />
                 </tr>
                 </thead>
             </table>

@@ -19,19 +19,6 @@ import makeStyles from "@material-ui/styles/makeStyles";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import {LazyScrollSettings, LazyScrollSettingsDialog} from "./components/lazy-scroll-settings";
 
-
-// export type ClassKey = LSClassKey
-//     | "id"
-//     | "firstName"
-//     | "lastName"
-//     | "state"
-//
-//     | "idTh"
-//     | "firstNameTh"
-//     | "lastNameTh"
-//     | "stateTh"
-//     ;
-
 export type ClassKey =
     | "id"
     | "firstName"
@@ -158,21 +145,21 @@ const RowContentHead = (p: LazyScrollProps & { head: boolean }) => {  // eslint-
 };
 
 
-const LazyScrollDemo = ({rowHeightHead, rowHeightBody, rowCountVisible, showHead, showFoot, onShowSettings}: { rowHeightHead: number, rowHeightBody: number, rowCountVisible: number, showHead: boolean, showFoot: boolean, onShowSettings: VoidFunction }) => {
+const LazyScrollDemo = (s: LazyScrollSettings) => {
     const classes = useStyles1();
     const rowSpecHead: RowSpecHead = {
         rowContent: RowContentHead,
-        rowHeight: rowHeightHead,
-        hide: !showHead
+        rowHeight: s.rowHeightHead_[0],
+        hide: !s.showHeader_[0]
     };
     const rowSpecBody: RowSpecBody = {
         rowContent: RowContentBody,
-        rowHeight: rowHeightBody
+        rowHeight: s.rowHeightBody_[0],
     };
     const rowSpecFoot: RowSpecHead = {
         rowContent: RowContentHead,
-        rowHeight: rowHeightHead,
-        hide: !showFoot
+        rowHeight: s.rowHeightHead_[0],
+        hide: !s.showFooter_[0]
     };
 
     const colCount = 4;
@@ -184,8 +171,8 @@ const LazyScrollDemo = ({rowHeightHead, rowHeightBody, rowCountVisible, showHead
         rowSpecBody,
         colCount,
         rows,
-        rowCountVisible,
-        onShowSettings
+        rowCountVisible: s.visRows_[0],
+        onShowSettings: () => s.openDialog_[1](true)
     };
 
     return <LazyScroll {...ppp} />;
@@ -196,9 +183,7 @@ const LazyScrollDemo = ({rowHeightHead, rowHeightBody, rowCountVisible, showHead
 
 const App: React.FC = () => {
 
-
     const theme: Theme = createMuiTheme();  // eslint-disable-line
-
 
     const rowHeightHead_ = useState<number>(CLazyScroll.DEFAULT_ROW_HEIGHT_HEAD);
     const rowHeightBody_ = useState<number>(CLazyScroll.DEFAULT_ROW_HEIGHT_BODY);
@@ -207,10 +192,6 @@ const App: React.FC = () => {
     const showHeader_ = useState<boolean>(true);
     const showFooter_ = useState<boolean>(true);
     const openDialog_ = useState<boolean>(false);
-
-    const onShowSettings = () => {
-        openDialog_[1](true);
-    };
 
 
     const lazyScrollSettings: LazyScrollSettings = {
@@ -227,13 +208,7 @@ const App: React.FC = () => {
         <ThemeProvider theme={theme}>
             <div style={{padding: 50, backgroundColor: ""}}>
                 <div style={{backgroundColor: "", padding: 0, margin: 0}}>
-                    <LazyScrollDemo
-                        rowHeightHead={rowHeightHead_[0]}
-                        rowHeightBody={rowHeightBody_[0]}
-                        rowCountVisible={visRows_[0]}
-                        showHead={showHeader_[0]}
-                        showFoot={showFooter_[0]}
-                        onShowSettings={onShowSettings}/>
+                    <LazyScrollDemo {...lazyScrollSettings}/>
                 </div>
             </div>
             <LazyScrollSettingsDialog  {...lazyScrollSettings}/>

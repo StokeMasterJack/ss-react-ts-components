@@ -1,5 +1,5 @@
 import * as React from "react";
-import {CSSProperties, FC, MutableRefObject, ReactChild, useRef} from "react";
+import {CSSProperties, Dispatch, FC, MutableRefObject, ReactChild, SetStateAction, useRef} from "react";
 import {InView, RootEl, Row, SetChildRef, useIntersection} from "./intersection-observer";
 import {Int} from "./util";
 
@@ -151,7 +151,7 @@ export class CLazyRow {
         return (p: RowContentProps) => {  // eslint-disable-line
             const classes = this.c.props.classes;
             const m = this;
-            return <td key={m.key} className={classes.td} colSpan={m.colSpan}>&nbsp;</td>;
+            return <td key={m.key} className={classes.td} colSpan={m.colSpan}>Loading...</td>;
         };
     }
 
@@ -206,11 +206,16 @@ export class CLazyRow {
 
 }
 
+export type UseState<T> = [T, Dispatch<SetStateAction<T>>];
+export type NN = UseState<number>;
+export type BB = UseState<boolean>;
+
 export class CLazyScroll {
 
     static readonly DEFAULT_ROW_TAG_NAME: RowTag = "tr";
-    static readonly DEFAULT_ROW_COUNT_VISIBLE: Int = 20;
-    static readonly DEFAULT_ROW_HEIGHT: number = 1;  //rem
+    static readonly DEFAULT_ROW_COUNT_VISIBLE: Int = 25;
+    static readonly DEFAULT_ROW_HEIGHT_HEAD: number = 1.5;  //rem
+    static readonly DEFAULT_ROW_HEIGHT_BODY: number = 1.2;  //rem
     static readonly DEFAULT_COL_SPAN: Int = 1;
 
     props: LazyScrollProps;
@@ -255,12 +260,12 @@ export class CLazyScroll {
     //in rems
     get rowHeightBody(): Int {
         const h = this.rowSpecBody.rowHeight;
-        return !!h ? h : CLazyScroll.DEFAULT_ROW_HEIGHT;
+        return !!h ? h : CLazyScroll.DEFAULT_ROW_HEIGHT_BODY;
     }
 
     get rowHeightHead(): Int {
         const h = this.rowSpecHead.rowHeight;
-        return !!h ? h : CLazyScroll.DEFAULT_ROW_HEIGHT;
+        return !!h ? h : CLazyScroll.DEFAULT_ROW_HEIGHT_HEAD;
     }
 
     //in rems

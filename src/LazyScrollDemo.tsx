@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import {LazyScrollSettings, LazyScrollSettingsDialog} from "components/lazy-scroll-settings";
-import {Emp, UseEmp} from "emp-types";
+import {LazyScrollSettings, LazyScrollSettingsDialog} from "./components/lazy-scroll-settings";
+import {Emp, UseEmp} from "./emp-types";
 import {
     LazyScroll,
     LazyScrollClasses,
@@ -9,8 +9,8 @@ import {
     RowContentProps,
     RowSpecBody,
     RowSpecHead
-} from "components/lazy-scroll";
-import {AppClasses, mkStyles} from "AppStyle";
+} from "./components/lazy-scroll";
+import {AppClasses, mkStyles} from "./AppStyle";
 
 
 export type LazyScrollDemoProps = LazyScrollSettings & { rows_: UseEmp };

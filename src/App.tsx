@@ -1,11 +1,11 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 
-import {CLazyScroll,} from "components/lazy-scroll";
+import {CLazyScroll,} from "./components/lazy-scroll";
 
-import {Emp, fetchEmps} from "emp-types";
-import {LazyScrollSettings} from "components/lazy-scroll-settings";
-import {LazyScrollDemo, LazyScrollDemoProps} from "LazyScrollDemo";
+import {Emp, fetchEmps} from "./emp-types";
+import {LazyScrollSettings} from "./components/lazy-scroll-settings";
+import {LazyScrollDemo, LazyScrollDemoProps} from "./LazyScrollDemo";
 
 
 const App: React.FC = () => {

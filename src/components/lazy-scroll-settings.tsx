@@ -1,4 +1,4 @@
-import *  as React from "react";
+import React from "react";
 import {Dispatch, SetStateAction, SyntheticEvent} from "react";
 
 import {InputProps as StandardInputProps} from "@material-ui/core/Input";
@@ -10,8 +10,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 
-import {CLazyScroll} from "components/lazy-scroll";
-import {UseBool, UseNum} from "components/util";
+import {CLazyScroll} from "./lazy-scroll";
+import {UseBool, UseNum} from "./util";
 
 
 export interface LazyScrollSettings {
